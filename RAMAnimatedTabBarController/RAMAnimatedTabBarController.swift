@@ -225,9 +225,18 @@ open class RAMAnimatedTabBarController: UITabBarController {
      **/
     open var bottomLineColor: UIColor = .black {
         didSet {
-            bottomLine?.backgroundColor = bottomLineColor
+            if let innerView = bottomLine?.subviews.first {
+                innerView.backgroundColor = bottomLineColor
+                bottomLine?.backgroundColor = .clear
+            } else {
+                bottomLine?.backgroundColor = bottomLineColor
+            }
         }
     }
+    
+    open var bottomLineOffset: CGFloat = 0
+    open var bottomLineHeight: CGFloat = 2
+    open var bottomLineWidth: CGFloat?
     
     /**
      Bottom line time of animations duration

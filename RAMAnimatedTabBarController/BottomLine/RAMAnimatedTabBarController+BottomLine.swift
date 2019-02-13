@@ -25,8 +25,6 @@ extension RAMAnimatedTabBarController {
     
     func createBottomLine() {
         guard let currentItem = (containers.filter { $0.value.tag == 0 }).first?.value else { return }
-
-        let lineHeight: CGFloat = 2
         
         let container = UIView()
         container.backgroundColor = .clear
@@ -36,8 +34,14 @@ extension RAMAnimatedTabBarController {
         
         container.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         container.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        container.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        container.heightAnchor.constraint(equalToConstant: lineHeight).isActive = true
+        if #available(iOS 11.0, *) {
+            container.bottomAnchor
+                .constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+                .isActive = true
+        } else {
+            container.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        }
+        container.heightAnchor.constraint(equalToConstant: bottomLineHeight).isActive = true
         
         
         let line = UIView()
@@ -46,12 +50,33 @@ extension RAMAnimatedTabBarController {
         container.addSubview(line)
         bottomLine = line
         
+        if let bottomLineWidth = bottomLineWidth {
+            line.backgroundColor = .clear
+            let innerView = UIView()
+            innerView.translatesAutoresizingMaskIntoConstraints = false
+            innerView.backgroundColor = bottomLineColor
+            line.addSubview(innerView)
+            innerView.bottomAnchor.constraint(equalTo: line.bottomAnchor).isActive = true
+            innerView.heightAnchor.constraint(equalToConstant: bottomLineHeight).isActive = true
+            innerView.centerXAnchor.constraint(equalTo: line.centerXAnchor).isActive = true
+            innerView.widthAnchor.constraint(equalToConstant: bottomLineWidth).isActive = true
+        }
+        
         lineLeadingConstraint = bottomLine?.leadingAnchor.constraint(equalTo: currentItem.leadingAnchor)
         lineLeadingConstraint?.isActive = true
 
         // add constraints
-        bottomLine?.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        bottomLine?.heightAnchor.constraint(equalToConstant: lineHeight).isActive = true
+        if #available(iOS 10.0, *) {
+            bottomLine?.bottomAnchor
+                .anchorWithOffset(to: container.bottomAnchor)
+                .constraint(equalToConstant: bottomLineOffset)
+                .isActive = true
+        } else {
+             bottomLine?.bottomAnchor
+                .constraint(equalTo: container.bottomAnchor)
+                .isActive = true
+        }
+        bottomLine?.heightAnchor.constraint(equalToConstant: bottomLineHeight).isActive = true
         bottomLine?.widthAnchor.constraint(equalTo: currentItem.widthAnchor).isActive = true
     }
     

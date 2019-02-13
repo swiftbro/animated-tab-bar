@@ -9,6 +9,14 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if let tabBarController = tabBarController as? RAMAnimatedTabBarController {
+            tabBarController.bottomLineWidth = 10
+            tabBarController.bottomLineOffset = -10
+            tabBarController.isBottomLineShow = true
+        }
+    }
 
     var index: NSInteger = 0
 
